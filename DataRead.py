@@ -32,10 +32,11 @@ tunnelP =data[['P097', 'P110']] #freestream static and total pressure
 process the data into usefull metrics
 """
 #given equation fro freestream dynamic pressure
-frStrDynP = 0.211804 + 1.928442 * tunnelData['Delta_Pb'] + 1.879374e-4 * tunnelData['Delta_Pb']**2
+frStrDynP = 0.211804 + 1.928442 * tunnelData['Delta_Pb'] + 1.879374e-4 * (tunnelData['Delta_Pb']**2)
 
 #getting free stream vel with bernouilli
-frstrVelocities = np.sqrt(2 * frStrDynP/tunnelData['rho'])
+frstrVelocities = frStrDynP.div(tunnelData["rho"], axis=0)  # Divide pressures by densities
+frstrVelocities = (2 * frstrVelocities).apply(np.sqrt) #apply sqrt
 
 
 '''
@@ -68,7 +69,9 @@ statRake = temp
 dynRake = totRake-statRake
 
 #gets the local velocity
-velRake =  np.sqrt(2 * dynRake / tunnelData['rho'].values[:, np.newaxis]) #weir syntax to apply operation correctly
+
+velRake = (dynRake).div(tunnelData["rho"], axis=0)  # Pressure difference divided by density
+velRake = (2 * velRake).apply(np.sqrt)  # Compute velocities
 
 """
 Test prints

@@ -2,6 +2,7 @@ import DataRead as DR
 import numpy as np
 import pandas as pd
 
+c = 0.160 #chord length
 #values are tabulated (rows = alpha, collumns = y position) [1 collumn = over entire tunnel]
 print("Rake properties\n")
 print(DR.totRake.head()) #total pressure at the rake 
@@ -21,22 +22,26 @@ keys = list(DR.totRake.columns) #tube names(to itterate positions)
 
 
 dy = np.diff(DR.totRakeLoc)  * 1e-3 #(m)
-
+print(dy[:5])
 #integrate the first term of the drag
 D1 = 0
-for i in range(len(dy)): #integrate with the discrete "bars" taking the leftmost value of the interval
-    D1 += DR.tunnelData['rho'] * (DR.frstrVelocities - DR.velRake[keys[i]])  * DR.velRake[keys[i]] * dy[i]
-print(D1)
+for j in range(len(dy)): #integrate with the discrete "bars" taking the leftmost value of the interval
+    D1 += DR.tunnelData['rho'] * (DR.frstrVelocities - DR.velRake[keys[j]])  * DR.velRake[keys[j]] * dy[j]
+print(D1.head())
 
 print("\n\n")
 ##integrate the second term of the drag
 D2 = 0
-for i in range(len(dy)):
-    D2 += DR.tunnelP['P110'] - DR.statRake[keys[i]] * dy[i]
-print(D2)
+for j in range(len(dy)):
+    D2 += DR.tunnelP['P110'] - DR.statRake[keys[j]] * dy[j]
+print(D2.head())
 #calculate total drag
 
 
 D = D1 + D2 #calculate the total drag
+
+CD1 = D1.div(DR.frStrDynP, axis=0) / (c)
+CD2 = D2.div(DR.frStrDynP, axis=0) / (c)
+CD = D.div(DR.frStrDynP, axis=0) / (c)
 
 
