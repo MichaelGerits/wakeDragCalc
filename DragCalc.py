@@ -8,7 +8,7 @@ print("Rake properties\n")
 print(DR.totRake.head()) #total pressure at the rake 
 print(DR.statRake.head()) #static pressure at the rake (expanded)
 print(DR.dynRake.head()) #dynamic pressure at the rake
-print(DR.velRake.head()) #local velocity at the rake
+print(DR.velRake) #local velocity at the rake
 
 print("\n Rake positions \n")
 print(DR.totRakeLoc) #locations of the rake measurements
@@ -33,7 +33,7 @@ print("\n\n")
 ##integrate the second term of the drag
 D2 = 0
 for j in range(len(dy)):
-    D2 += DR.tunnelP['P110'] - DR.statRake[keys[j]] * dy[j]
+    D2 += DR.pStat - DR.statRake[keys[j]] * dy[j]
 print(D2.head())
 #calculate total drag
 

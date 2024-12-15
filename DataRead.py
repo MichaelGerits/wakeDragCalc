@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-data = pd.read_csv('raw_testG82D.txt', skipinitialspace=True, skiprows=[1], sep=r'\t') #import the data
+data = pd.read_csv('raw_testG82D.txt', skipinitialspace=True, skiprows=[1,2], sep=r'\t') #import the data
 
 
 """
@@ -33,6 +33,10 @@ process the data into usefull metrics
 """
 #given equation fro freestream dynamic pressure
 frStrDynP = 0.211804 + 1.928442 * tunnelData['Delta_Pb'] + 1.879374e-4 * (tunnelData['Delta_Pb']**2)
+#fix the static pressure
+tot = tunnelP['P097']
+print( tot-frStrDynP)
+pStat = tot - frStrDynP
 
 #getting free stream vel with bernouilli
 frstrVelocities = frStrDynP.div(tunnelData["rho"], axis=0)  # Divide pressures by densities
@@ -41,9 +45,7 @@ frstrVelocities = (2 * frstrVelocities).apply(np.sqrt) #apply sqrt
 
 '''
 this part expands the static rake values to correspond with the total values
-
 It looks at the positios and any positions  that fall in between the defined values get copied
-
 temp will take the tap names of the total pressure too, to make it easier to itterate once integrating
 '''
 tkeys = totRake.columns #collumn keys to itterate
